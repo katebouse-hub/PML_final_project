@@ -3,17 +3,14 @@ import pandas as pd
 # Load CSV
 IEP_df = pd.read_csv("2025_formatted1.csv")
 
-num_rows = IEP_df.shape[0]
-print(f"Number of rows before cleaning: {num_rows}")
 
-IEP_df_interpolated = IEP_df.interpolate()
+IEP_df_dropped = IEP_df.drop(IEP_df.columns[[40, 41, 42]], axis = 1)
 
-IEP_df = IEP_df.dropna()
+IEP_df_numeric = IEP_df_dropped.select_dtypes(include='number')
 
-num_rows_new = IEP_df.shape[0]
-print(f"Number of rows after cleaning: {num_rows_new}")
+num_columns_numeric = len(IEP_df_numeric.columns)
+print(f'number of numeric columns: {num_columns_numeric}')
 
+IEP_df_interpolated = IEP_df_numeric.interpolate()
 
-# Count columns
-num_columns = len(IEP_df.columns)
-print('Number of columns in IEP_df:', num_columns)
+IEP_df_final = pd.concat([IEP_df_interpolated, IEP_df_dropped.select_dtypes(exclude='number')],axis=1)
